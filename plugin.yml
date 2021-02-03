@@ -1,0 +1,14 @@
+name: SimpleSleep
+main: brokiem\simplesleep\SimpleSleep
+version: 0.0.1
+api: 3.14.0
+author: brokiem
+
+commands:
+  simplesleep:
+    description: "SimpleSleep commands"
+    permission: simplesleep.command
+
+permissions:
+  simplesleep.command:
+    default: op
