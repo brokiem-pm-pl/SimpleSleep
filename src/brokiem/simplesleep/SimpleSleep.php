@@ -72,7 +72,9 @@ class SimpleSleep extends PluginBase implements Listener
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
-        switch (strtolower($command->getName())) {
+        if (!isset($args[0])) return false;
+
+        switch (strtolower($args[0])) {
             case "reload":
                 $this->reloadConfig();
                 $sender->sendMessage($this->prefix . TextFormat::GREEN . " Config reloaded successfully!");

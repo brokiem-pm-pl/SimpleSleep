@@ -11,6 +11,12 @@ This plugin aims to improve sleeping in multiplayer by only having a certain per
 - Custom messages, sleep duration, and minimal players to sleep
 - Fully maintained
 
+### Commands
+| Command | Description | Permission | Default |
+| --- | --- | --- | --- |
+| ```/simplesleep reload```` | ```Reload SimpleSleep config``` | ```simplesleep.command``` | op |
+| ```/simplesleep update```` | ```Check SimpleSleep update from poggit``` | ```simplesleep.command``` | op |
+
 ### Issues
 If you find issues, please create issues [here](https://github.com/brokiem/SimpleSleep/issues/new)
 
@@ -32,4 +38,7 @@ message-type: "message"
 #Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
 on-time-change: "It's morning now, wake up!"
+
+### Credits
+The plugin logo is taken from here [here](https://id.pinterest.com/pin/819866307149666849/)
 ```
