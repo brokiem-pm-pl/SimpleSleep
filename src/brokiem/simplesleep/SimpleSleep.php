@@ -35,6 +35,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\player\PlayerBedLeaveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
@@ -157,6 +158,15 @@ class SimpleSleep extends PluginBase implements Listener
     }
 
     public function onLeaveBed(PlayerBedLeaveEvent $event)
+    {
+        $player = $event->getPlayer();
+
+        if (isset($this->sleepingPlayer[$player->getLowerCaseName()])) {
+            unset($this->sleepingPlayer[$player->getLowerCaseName()]);
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $event)
     {
         $player = $event->getPlayer();
 
