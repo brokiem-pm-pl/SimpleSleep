@@ -53,9 +53,21 @@ class SimpleSleep extends PluginBase implements Listener
     public function onEnable()
     {
         $this->saveDefaultConfig();
+        $this->checkConfig();
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
         UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
+    }
+
+    private function checkConfig()
+    {
+        if ($this->getConfig()->get("config-version") !== 1.0) {
+            $this->getLogger()->notice("Your configuration file is outdated, updating the config.yml...");
+            $this->getLogger()->notice("The old configuration file can be found at config.old.yml");
+
+            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml");
+            $this->saveDefaultConfig();
+        }
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
@@ -76,9 +88,9 @@ class SimpleSleep extends PluginBase implements Listener
 
     public function broadcastMessage(string $message)
     {
-        if (strtolower($this->getConfig()->get("message-type")) === "message") {
+        if (strtolower($this->getConfig()->get("message-type", "actionbar")) === "message") {
             $this->broadcastMessage($message);
-        } elseif (strtolower($this->getConfig()->get("message-type")) === "actionbar") {
+        } elseif (strtolower($this->getConfig()->get("message-type", "actionbar")) === "actionbar") {
             foreach ($this->getServer()->getOnlinePlayers() as $player) {
                 $player->sendActionBarMessage($message);
             }

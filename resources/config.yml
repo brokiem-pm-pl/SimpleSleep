@@ -3,6 +3,9 @@
 # Author: brokiem (https://github.com/brokiem)
 # Source code: https://github.com/brokiem/SimpleSleep
 
+# Don't edit this version
+config-version: 1.0
+
 # Enabled world for sleep to trigger event
 enable-all-worlds: true
 
@@ -19,7 +22,7 @@ sleep-duration: 100 # meant 5 seconds
 minimal-players: 1
 
 #Message type (Value: "message", "actionbar")
-message-type: "message"
+message-type: "actionbar"
 
 #Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
