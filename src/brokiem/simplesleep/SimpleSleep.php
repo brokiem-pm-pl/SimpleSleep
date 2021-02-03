@@ -35,6 +35,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\player\PlayerBedLeaveEvent;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat;
@@ -80,21 +81,36 @@ class SimpleSleep extends PluginBase implements Listener
                 $sender->sendMessage($this->prefix . TextFormat::GREEN . " Config reloaded successfully!");
                 break;
             case "update":
-                $sender->sendMessage($this->prefix . TextFormat::YELLOW . "Checking updates, Please wait...");
+                $sender->sendMessage($this->prefix . TextFormat::YELLOW . " Checking updates, Please wait...");
                 UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
+                $sender->sendMessage($this->prefix . TextFormat::GREEN . " Please check the console for update messages");
                 break;
         }
 
         return true;
     }
 
-    public function broadcastMessage(string $message)
+    public function broadcastMessage(string $message, array $players = null)
     {
         if (strtolower($this->getConfig()->get("message-type", "actionbar")) === "message") {
-            $this->broadcastMessage($message);
+            if ($players === null) {
+                $this->broadcastMessage($message);
+            } else {
+                /** @var Player $player */
+                foreach ($players as $player) {
+                    $player->sendMessage($message);
+                }
+            }
         } elseif (strtolower($this->getConfig()->get("message-type", "actionbar")) === "actionbar") {
-            foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                $player->sendActionBarMessage($message);
+            if ($players === null) {
+                foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                    $player->sendActionBarMessage($message);
+                }
+            } else {
+                /** @var Player $player */
+                foreach ($players as $player) {
+                    $player->sendActionBarMessage($message);
+                }
             }
         }
     }
@@ -128,13 +144,13 @@ class SimpleSleep extends PluginBase implements Listener
                         $sleepingPlayer = $this->getServer()->getPlayerExact($name);
 
                         if ($sleepingPlayer !== null) {
-                            $sleepingPlayer->teleport($sleepingPlayer->add(1, 0, 1));
+                            $sleepingPlayer->stopSleep();
+                            $this->broadcastMessage($this->getConfig()->get("on-time-change", "It's morning now, wake up!"), [$sleepingPlayer]);
                         }
                     }
 
                     $this->isTaskRun = false;
                     $this->sleepingPlayer = [];
-                    $this->broadcastMessage($this->getConfig()->get("on-time-change", "It's morning now, wake up!"));
                 }), (int)$this->getConfig()->get("sleep-duration", 120));
             }
         }
@@ -148,5 +164,4 @@ class SimpleSleep extends PluginBase implements Listener
             unset($this->sleepingPlayer[$player->getLowerCaseName()]);
         }
     }
-
 }
