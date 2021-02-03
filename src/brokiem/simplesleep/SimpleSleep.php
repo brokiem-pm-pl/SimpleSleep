@@ -124,10 +124,18 @@ class SimpleSleep extends PluginBase implements Listener
                         $level->setTime(0);
                     }
 
+                    foreach ($this->sleepingPlayer as $name) {
+                        $sleepingPlayer = $this->getServer()->getPlayerExact($name);
+
+                        if ($sleepingPlayer !== null) {
+                            $sleepingPlayer->teleport($sleepingPlayer->add(1, 0, 1));
+                        }
+                    }
+
                     $this->isTaskRun = false;
                     $this->sleepingPlayer = [];
                     $this->broadcastMessage($this->getConfig()->get("on-time-change", "It's morning now, wake up!"));
-                }), (int)$this->getConfig()->get("sleep-duration", 100));
+                }), (int)$this->getConfig()->get("sleep-duration", 120));
             }
         }
     }

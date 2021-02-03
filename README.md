@@ -1,4 +1,4 @@
-<h1>SimpleSleep<img src="https://github.com/brokiem/SimpleSleep/blob/master/assets/logo.png" height="64" width="64" align="left" alt=""></h1><br>
+<h1>SimpleSleep<img src="https://github.com/brokiem/SimpleSleep/blob/master/assets/logo.PNG" height="64" width="64" align="left" alt=""></h1><br>
 
 [![License](https://img.shields.io/github/license/brokiem/SimpleSleep)](https://github.com/brokiem/SimpleSleep)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleSleep)](https://github.com/brokiem/SimpleSleep/stargazers) <br>
@@ -29,17 +29,13 @@ enable-all-worlds: true
 enabled-worlds:
   - "world"
   - "world2"
-#Sleep duration in tick (20 ticks = 1 second)
+# Sleep duration in tick (20 ticks = 1 second)
 sleep-duration: 100 # meant 5 seconds
-#Minimum players to change time
+# Minimum players to change time
 minimal-players: 1
-#Message type (Value: "message", "actionbar")
+# Message type (Value: "message", "actionbar")
 message-type: "message"
-#Sleep Messages
+# Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
 on-time-change: "It's morning now, wake up!"
-```
-
-### Credits
-The plugin logo is taken from here [here](https://id.pinterest.com/pin/819866307149666849/)
 ```

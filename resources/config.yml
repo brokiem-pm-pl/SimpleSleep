@@ -15,16 +15,16 @@ enabled-worlds:
   - "world2"
   - "your-world-name"
 
-#Sleep duration in tick (20 ticks = 1 second)
-sleep-duration: 100 # meant 5 seconds
+# Sleep duration in tick (20 ticks = 1 second)
+sleep-duration: 120 # meant 6 seconds
 
-#Minimum players to change time
+# Minimum players to change time
 minimal-players: 1
 
-#Message type (Value: "message", "actionbar")
+# Message type (Value: "message", "actionbar")
 message-type: "actionbar"
 
-#Sleep Messages
+# Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
 on-time-change: "It's morning now, wake up!"
 ...
