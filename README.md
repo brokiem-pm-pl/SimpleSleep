@@ -11,6 +11,9 @@ This plugin aims to improve sleeping in multiplayer by only having a certain per
 - Custom messages, sleep duration, and minimal players to sleep
 - Fully maintained
 
+### Issues
+If you find issues, please create issues [here](https://github.com/brokiem/SimpleSleep/issues/new)
+
 ### Config
 ```yaml
 ######## SimpleSleep Configuration File ########
