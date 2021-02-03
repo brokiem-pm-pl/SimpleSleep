@@ -5,6 +5,7 @@ branches:
 projects:
   SimpleSleep:
     path: ""
+    icon: "assets/logo.PNG"
     libs:
       - src: JackMD/UpdateNotifier/UpdateNotifier
         version: ^2.1
