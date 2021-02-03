@@ -1,4 +1,4 @@
-<h1>SimpleSleep<img src="https://github.com/brokiem/SimpleLay/blob/master/assets/logo.PNG" height="64" width="64" align="left" alt=""></h1><br>
+<h1>SimpleSleep<img src="https://github.com/brokiem/SimpleSleep/blob/master/assets/logo.png" height="64" width="64" align="left" alt=""></h1><br>
 
 [![License](https://img.shields.io/github/license/brokiem/SimpleSleep)](https://github.com/brokiem/SimpleSleep)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleSleep)](https://github.com/brokiem/SimpleSleep/stargazers) <br>
