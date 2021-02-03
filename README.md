@@ -38,6 +38,7 @@ message-type: "message"
 #Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
 on-time-change: "It's morning now, wake up!"
+```
 
 ### Credits
 The plugin logo is taken from here [here](https://id.pinterest.com/pin/819866307149666849/)
