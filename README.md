@@ -14,8 +14,8 @@ This plugin aims to improve sleeping in multiplayer by only having a certain per
 ### Commands
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
-| ```/simplesleep reload```` | ```Reload SimpleSleep config``` | ```simplesleep.command``` | op |
-| ```/simplesleep update```` | ```Check SimpleSleep update from poggit``` | ```simplesleep.command``` | op |
+| ```/simplesleep reload``` | ```Reload SimpleSleep config``` | ```simplesleep.command``` | op |
+| ```/simplesleep update``` | ```Check SimpleSleep update from poggit``` | ```simplesleep.command``` | op |
 
 ### Issues
 If you find issues, please create issues [here](https://github.com/brokiem/SimpleSleep/issues/new)
