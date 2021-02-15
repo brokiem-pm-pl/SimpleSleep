@@ -113,7 +113,7 @@ class SimpleSleep extends PluginBase implements Listener
 
         $this->sleepingPlayer[] = $player->getLowerCaseName();
 
-        if (!isset($this->delayedPlayer[$player->getLowerCaseName()])) { // to prevent spamming
+        if (!in_array($player->getLowerCaseName(), $this->sleepingPlayer)) { // to prevent spamming
             $this->broadcastMessage(
                 str_replace("{player}",
                     $player->getDisplayName(),
@@ -124,7 +124,7 @@ class SimpleSleep extends PluginBase implements Listener
             $this->delayedPlayer[] = $player->getLowerCaseName();
 
             $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick) use ($player):void {
-                if (isset($this->delayedPlayer[$player->getLowerCaseName()])) {
+                if (in_array($player->getLowerCaseName(), $this->delayedPlayer)) {
                     unset($this->delayedPlayer[$player->getLowerCaseName()]);
                 }
             }), 600);
@@ -135,6 +135,8 @@ class SimpleSleep extends PluginBase implements Listener
                 $this->isTaskRun = true;
 
                 $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick): void {
+                    if (count($this->sleepingPlayer) < (int)$this->getConfig()->get("minimal-players", 2)) return;
+
                     /** @var string $enabledWorlds */
                     foreach ((array)$this->getConfig()->get("enabled-worlds") as $enabledWorlds) {
                         $world = $this->getServer()->getLevelByName($enabledWorlds);
@@ -165,7 +167,7 @@ class SimpleSleep extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
 
-        if (isset($this->sleepingPlayer[$player->getLowerCaseName()])) {
+        if (in_array($player->getLowerCaseName(), $this->sleepingPlayer)) {
             unset($this->sleepingPlayer[$player->getLowerCaseName()]);
         }
     }
@@ -174,11 +176,11 @@ class SimpleSleep extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
 
-        if (isset($this->sleepingPlayer[$player->getLowerCaseName()])) {
+        if (in_array($player->getLowerCaseName(), $this->sleepingPlayer)) {
             unset($this->sleepingPlayer[$player->getLowerCaseName()]);
         }
 
-        if (isset($this->delayedPlayer[$player->getLowerCaseName()])) {
+        if (in_array($player->getLowerCaseName(), $this->delayedPlayer)) {
             unset($this->delayedPlayer[$player->getLowerCaseName()]);
         }
     }
