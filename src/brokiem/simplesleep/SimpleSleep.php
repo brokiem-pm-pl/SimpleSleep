@@ -113,7 +113,6 @@ class SimpleSleep extends PluginBase implements Listener
 
         $this->sleepingPlayer[] = $player->getLowerCaseName();
 
-        var_dump($this->delayedPlayer);
         if (!in_array($player->getLowerCaseName(), $this->delayedPlayer)) { // to prevent spamming
             $this->broadcastMessage(
                 str_replace("{player}",
@@ -128,8 +127,6 @@ class SimpleSleep extends PluginBase implements Listener
                 if (in_array($player->getLowerCaseName(), $this->delayedPlayer)) {
                     unset($this->delayedPlayer[array_search($player->getLowerCaseName(), $this->delayedPlayer)]);
                 }
-
-                var_dump($this->delayedPlayer);
             }), 600);
         }
 
