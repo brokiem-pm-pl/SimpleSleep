@@ -113,7 +113,8 @@ class SimpleSleep extends PluginBase implements Listener
 
         $this->sleepingPlayer[] = $player->getLowerCaseName();
 
-        if (!in_array($player->getLowerCaseName(), $this->sleepingPlayer)) { // to prevent spamming
+        var_dump($this->delayedPlayer);
+        if (!in_array($player->getLowerCaseName(), $this->delayedPlayer)) { // to prevent spamming
             $this->broadcastMessage(
                 str_replace("{player}",
                     $player->getDisplayName(),
@@ -125,17 +126,22 @@ class SimpleSleep extends PluginBase implements Listener
 
             $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick) use ($player):void {
                 if (in_array($player->getLowerCaseName(), $this->delayedPlayer)) {
-                    unset($this->delayedPlayer[$player->getLowerCaseName()]);
+                    unset($this->delayedPlayer[array_search($player->getLowerCaseName(), $this->delayedPlayer)]);
                 }
+
+                var_dump($this->delayedPlayer);
             }), 600);
         }
 
         if (!$this->isTaskRun) {
-            if (count($this->sleepingPlayer) >= (int)$this->getConfig()->get("minimal-players", 2)) {
+            if (count($this->sleepingPlayer) >= (int)$this->getConfig()->get("minimal-players", 1)) {
                 $this->isTaskRun = true;
 
                 $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick): void {
-                    if (count($this->sleepingPlayer) < (int)$this->getConfig()->get("minimal-players", 2)) return;
+                    if (count($this->sleepingPlayer) < (int)$this->getConfig()->get("minimal-players", 1)) {
+                        $this->isTaskRun = false;
+                        return;
+                    }
 
                     /** @var string $enabledWorlds */
                     foreach ((array)$this->getConfig()->get("enabled-worlds") as $enabledWorlds) {
@@ -168,7 +174,7 @@ class SimpleSleep extends PluginBase implements Listener
         $player = $event->getPlayer();
 
         if (in_array($player->getLowerCaseName(), $this->sleepingPlayer)) {
-            unset($this->sleepingPlayer[$player->getLowerCaseName()]);
+            unset($this->sleepingPlayer[array_search($player->getLowerCaseName(), $this->sleepingPlayer)]);
         }
     }
 
@@ -177,11 +183,11 @@ class SimpleSleep extends PluginBase implements Listener
         $player = $event->getPlayer();
 
         if (in_array($player->getLowerCaseName(), $this->sleepingPlayer)) {
-            unset($this->sleepingPlayer[$player->getLowerCaseName()]);
+            unset($this->sleepingPlayer[array_search($player->getLowerCaseName(), $this->sleepingPlayer)]);
         }
 
         if (in_array($player->getLowerCaseName(), $this->delayedPlayer)) {
-            unset($this->delayedPlayer[$player->getLowerCaseName()]);
+            unset($this->delayedPlayer[array_search($player->getLowerCaseName(), $this->delayedPlayer)]);
         }
     }
 }

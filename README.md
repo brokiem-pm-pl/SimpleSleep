@@ -33,7 +33,7 @@ enabled-worlds:
 # Sleep duration in tick (20 ticks = 1 second)
 sleep-duration: 100 # mean 5 seconds
 # Minimum players to change time
-minimal-players: 2
+minimal-players: 1
 # Message type (Value: "message", "actionbar")
 message-type: "actionbar"
 # Sleep Messages
