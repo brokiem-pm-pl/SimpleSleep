@@ -131,7 +131,7 @@ class SimpleSleep extends PluginBase implements Listener
         }
 
         if (!$this->isTaskRun) {
-            if (count($this->sleepingPlayer) >= (int)$this->getConfig()->get("minimal-players", 1)) {
+            if (count($this->sleepingPlayer) >= (int)$this->getConfig()->get("minimal-players", 2)) {
                 $this->isTaskRun = true;
 
                 $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick): void {
