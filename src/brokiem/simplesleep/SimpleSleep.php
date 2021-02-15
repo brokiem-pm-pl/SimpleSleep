@@ -12,7 +12,7 @@ declare(strict_types=1);
  *                 | |                            | |
  *                 |_|                            |_|
  *
- * Copyright (C) 2020 brokiem
+ * Copyright (C) 2021 brokiem
  *
  * This software is distributed under "GNU General Public License v3.0".
  *
@@ -24,7 +24,6 @@ declare(strict_types=1);
  * You should have received a copy of the GNU General Public License v3.0
  * along with this program. If not, see
  * <https://opensource.org/licenses/GPL-3.0>.
- *
  */
 
 namespace brokiem\simplesleep;
@@ -36,7 +35,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\player\PlayerBedLeaveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\Player;
+use pocketmine\level\Level;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat;
@@ -46,16 +45,20 @@ class SimpleSleep extends PluginBase implements Listener
     /** @var string $prefix */
     private $prefix = "§7[§aSimple§2Sleep§7]§r";
 
-    /** @var array */
+    /** @var array $sleepingPlayer */
     private $sleepingPlayer = [];
 
-    /** @var bool */
+    /** @var bool $isTaskRun */
     private $isTaskRun = false;
+
+    /** @var array $delayedPlayer */
+    private $delayedPlayer = [];
 
     public function onEnable()
     {
         $this->saveDefaultConfig();
         $this->checkConfig();
+
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
         UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
@@ -68,7 +71,9 @@ class SimpleSleep extends PluginBase implements Listener
             $this->getLogger()->notice("The old configuration file can be found at config.old.yml");
 
             rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml");
+
             $this->saveDefaultConfig();
+            $this->reloadConfig();
         }
     }
 
@@ -81,37 +86,21 @@ class SimpleSleep extends PluginBase implements Listener
                 $this->reloadConfig();
                 $sender->sendMessage($this->prefix . TextFormat::GREEN . " Config reloaded successfully!");
                 break;
-            case "update":
-                $sender->sendMessage($this->prefix . TextFormat::YELLOW . " Checking updates, Please wait...");
-                UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
-                $sender->sendMessage($this->prefix . TextFormat::GREEN . " Please check the console for update messages");
-                break;
         }
 
         return true;
     }
 
-    public function broadcastMessage(string $message, array $players = null)
+    /**
+     * @param string $message
+     */
+    public function broadcastMessage(string $message)
     {
         if (strtolower($this->getConfig()->get("message-type", "actionbar")) === "message") {
-            if ($players === null) {
-                $this->broadcastMessage($message);
-            } else {
-                /** @var Player $player */
-                foreach ($players as $player) {
-                    $player->sendMessage($message);
-                }
-            }
+            $this->getServer()->broadcastMessage($message);
         } elseif (strtolower($this->getConfig()->get("message-type", "actionbar")) === "actionbar") {
-            if ($players === null) {
-                foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                    $player->sendActionBarMessage($message);
-                }
-            } else {
-                /** @var Player $player */
-                foreach ($players as $player) {
-                    $player->sendActionBarMessage($message);
-                }
+            foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                $player->sendActionBarMessage($message);
             }
         }
     }
@@ -120,33 +109,48 @@ class SimpleSleep extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
 
-        if (!$this->getConfig()->get("enable-all-worlds") and
-            !in_array($player->getLevel()->getFolderName(), $this->getConfig()->get("enabled-worlds"))
-        ) return;
+        if (!$this->getConfig()->get("enable-all-worlds") and !in_array($player->getLevel()->getFolderName(), $this->getConfig()->get("enabled-worlds"))) return;
 
         $this->sleepingPlayer[] = $player->getLowerCaseName();
-        $this->broadcastMessage(
-            str_replace("{player}",
-                $player->getDisplayName(),
-                $this->getConfig()->get("on-enter-bed-message", "{player} is sleeping!")
-            )
-        );
+
+        if (!isset($this->delayedPlayer[$player->getLowerCaseName()])) { // to prevent spamming
+            $this->broadcastMessage(
+                str_replace("{player}",
+                    $player->getDisplayName(),
+                    $this->getConfig()->get("on-enter-bed-message", "{player} is sleeping now!")
+                )
+            );
+
+            $this->delayedPlayer[] = $player->getLowerCaseName();
+
+            $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick) use ($player):void {
+                if (isset($this->delayedPlayer[$player->getLowerCaseName()])) {
+                    unset($this->delayedPlayer[$player->getLowerCaseName()]);
+                }
+            }), 600);
+        }
 
         if (!$this->isTaskRun) {
             if (count($this->sleepingPlayer) >= (int)$this->getConfig()->get("minimal-players", 1)) {
                 $this->isTaskRun = true;
 
                 $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick): void {
-                    foreach ($this->getServer()->getLevels() as $level) {
-                        $level->setTime(0);
+                    /** @var string $enabledWorlds */
+                    foreach ((array)$this->getConfig()->get("enabled-worlds") as $enabledWorlds) {
+                        $world = $this->getServer()->getLevelByName($enabledWorlds);
+
+                        if ($world instanceof Level) {
+                            if ($this->getServer()->isLevelLoaded($enabledWorlds)) {
+                                $world->setTime(Level::TIME_DAY);
+                            }
+                        }
                     }
 
                     foreach ($this->sleepingPlayer as $name) {
                         $sleepingPlayer = $this->getServer()->getPlayerExact($name);
 
                         if ($sleepingPlayer !== null) {
-                            $sleepingPlayer->stopSleep();
-                            $this->broadcastMessage($this->getConfig()->get("on-time-change", "It's morning now, wake up!"), [$sleepingPlayer]);
+                            $sleepingPlayer->stopSleep(); // otherwise, the player wouldn't wake up in the morning
                         }
                     }
 
@@ -172,6 +176,10 @@ class SimpleSleep extends PluginBase implements Listener
 
         if (isset($this->sleepingPlayer[$player->getLowerCaseName()])) {
             unset($this->sleepingPlayer[$player->getLowerCaseName()]);
+        }
+
+        if (isset($this->delayedPlayer[$player->getLowerCaseName()])) {
+            unset($this->delayedPlayer[$player->getLowerCaseName()]);
         }
     }
 }

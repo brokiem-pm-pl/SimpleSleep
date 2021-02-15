@@ -17,7 +17,6 @@ This plugin aims to improve sleeping in multiplayer by only having a certain per
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/simplesleep reload``` | ```Reload SimpleSleep config``` | ```simplesleep.command``` | op |
-| ```/simplesleep update``` | ```Check SimpleSleep update from poggit``` | ```simplesleep.command``` | op |
 
 ### Issues
 If you find issues, please create issues [here](https://github.com/brokiem/SimpleSleep/issues/new)
@@ -32,12 +31,11 @@ enabled-worlds:
   - "world"
   - "world2"
 # Sleep duration in tick (20 ticks = 1 second)
-sleep-duration: 100 # meant 5 seconds
+sleep-duration: 100 # mean 5 seconds
 # Minimum players to change time
 minimal-players: 1
 # Message type (Value: "message", "actionbar")
-message-type: "message"
+message-type: "actionbar"
 # Sleep Messages
 on-enter-bed-message: "{player} is sleeping!"
-on-time-change: "It's morning now, wake up!"
 ```
