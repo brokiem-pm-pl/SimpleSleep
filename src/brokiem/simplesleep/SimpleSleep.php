@@ -140,13 +140,29 @@ class SimpleSleep extends PluginBase implements Listener
                         return;
                     }
 
-                    /** @var string $enabledWorlds */
-                    foreach ((array)$this->getConfig()->get("enabled-worlds") as $enabledWorlds) {
-                        $world = $this->getServer()->getLevelByName($enabledWorlds);
+                    if ((bool) $this->getConfig()->get("enable-all-worlds")) {
+                        foreach ($this->getServer()->getLevels() as $level) {
+                            $time = $level->getTimeOfDay();
+                            $isNight = ($time >= Level::TIME_NIGHT and $time < Level::TIME_SUNRISE);
 
-                        if ($world instanceof Level) {
-                            if ($this->getServer()->isLevelLoaded($enabledWorlds)) {
-                                $world->setTime(Level::TIME_DAY);
+                            if ($isNight) {
+                                $level->setTime($level->getTime() + Level::TIME_FULL - $time);
+                            }
+                        }
+                    } else {
+                        /** @var string $enabledWorlds */
+                        foreach ((array)$this->getConfig()->get("enabled-worlds") as $enabledWorlds) {
+                            $world = $this->getServer()->getLevelByName($enabledWorlds);
+
+                            if ($world instanceof Level) {
+                                if ($this->getServer()->isLevelLoaded($enabledWorlds)) {
+                                    $time = $world->getTimeOfDay();
+                                    $isNight = ($time >= Level::TIME_NIGHT and $time < Level::TIME_SUNRISE);
+
+                                    if ($isNight) {
+                                        $world->setTime($world->getTime() + Level::TIME_FULL - $time);
+                                    }
+                                }
                             }
                         }
                     }
